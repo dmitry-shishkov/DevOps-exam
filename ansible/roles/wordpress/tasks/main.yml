@@ -1,0 +1,86 @@
+---
+- name: create directory
+  file:
+    path: /srv/www
+    state: directory
+    owner: www-data
+    group: www-data
+
+
+- name: unpacking wordpress
+  unarchive:
+    src: https://wordpress.org/latest.tar.gz
+    dest: /srv/www
+    remote_src: yes
+
+
+- name: set file rights for wordpress
+  file:
+    path: /srv/www/wordpress
+    owner: www-data
+    group: www-data
+
+
+- name: create wordpress.conf
+  template: 
+    dest: /etc/apache2/sites-available/wordpress.conf
+    src: templates/wordpress.conf.j2
+
+- name: enable the site
+  command: a2ensite wordpress
+
+
+- name: enable URL rewriting
+  command: a2enmod rewrite
+
+
+- name: disable the default “It Works” site
+  command: a2dissite 000-default
+
+
+- name: reload apach
+  service:
+    name: apache2
+    state: reloaded
+
+
+- name: creates database for wordpress
+  mysql_db:
+    name: wordpress
+    state: present
+    login_user: root
+    login_password: '123456'
+
+
+- name: create mysql user for wordpress
+  mysql_user:
+    name: wordpress
+    password: '123456'
+    priv: '*.*:ALL,GRANT'
+    state: present
+    login_user: root
+    login_password: '123456'
+
+
+- name: copy file with owner and permissions
+  command: sudo -u www-data cp /srv/www/wordpress/wp-config-sample.php /srv/www/wordpress/wp-config.php
+
+
+- name: set the database credentials
+  command: sudo -u www-data sed -i 's/database_name_here/wordpress/' /srv/www/wordpress/wp-config.php
+
+
+- name: set the database credentials
+  command: sudo -u www-data sed -i 's/username_here/wordpress/' /srv/www/wordpress/wp-config.php
+
+
+- name: set the database credentials
+  command: sudo -u www-data sed -i 's/password_here/123456/' /srv/www/wordpress/wp-config.php
+
+
+- name: copy wp-config.php from local to remote
+  copy:
+    src: files/wp-config.php
+    dest: /srv/www/wordpress/wp-config.php
+    force: yes
+...

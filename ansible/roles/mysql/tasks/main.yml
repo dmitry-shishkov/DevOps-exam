@@ -1,0 +1,25 @@
+---
+- name: make sure mysql service is running
+  service:
+    name: mysql
+    state: started
+    enabled: true
+
+
+- name: change the authentication plugin of mysql root user to mysql_native_password
+  command: mysql -u root -e 'UPDATE mysql.user SET plugin="mysql_native_password" WHERE user="root" AND host="localhost"'
+
+
+- name: Flush Privileges
+  command: mysql -u root -e 'FLUSH PRIVILEGES'
+
+
+- name: set mysql root password
+  mysql_user:
+    login_host: 'localhost'
+    login_user: 'root'
+    login_password: ''
+    name: 'root'
+    password: '123456'
+    state: present
+...
