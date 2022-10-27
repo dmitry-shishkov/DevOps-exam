@@ -63,19 +63,19 @@
 
 
 - name: copy file with owner and permissions
-  command: sudo -u www-data cp /srv/www/wordpress/wp-config-sample.php /srv/www/wordpress/wp-config.php
+  command: cp /srv/www/wordpress/wp-config-sample.php /srv/www/wordpress/wp-config.php
 
 
 - name: set the database credentials
-  command: sudo -u www-data sed -i 's/database_name_here/wordpress/' /srv/www/wordpress/wp-config.php
+  command: sed -i 's/database_name_here/wordpress/' /srv/www/wordpress/wp-config.php
 
 
 - name: set the database credentials
-  command: sudo -u www-data sed -i 's/username_here/wordpress/' /srv/www/wordpress/wp-config.php
+  command: sed -i 's/username_here/wordpress/' /srv/www/wordpress/wp-config.php
 
 
 - name: set the database credentials
-  command: sudo -u www-data sed -i 's/password_here/123456/' /srv/www/wordpress/wp-config.php
+  command: sed -i 's/password_here/123456/' /srv/www/wordpress/wp-config.php
 
 
 - name: copy wp-config.php from local to remote
